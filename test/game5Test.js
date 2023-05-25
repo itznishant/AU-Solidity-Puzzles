@@ -6,17 +6,17 @@ describe('Game5', function () {
     const Game = await ethers.getContractFactory('Game5');
     const game = await Game.deploy();
 
-    const address = 0x0;
+    return { game };
 
-    return { game, address };
   }
   it('should be a winner', async function () {
-    const { game, address} = await loadFixture(deployContractAndSetVariables);
+    const { game } = await loadFixture(deployContractAndSetVariables);
+
+    const signer = (await ethers.getSigners()).filter((s) => (String(s.address).startsWith('0x00') && ((parseInt(s.address, 16) < parseInt('0x00FfFFfFFFfFFFFFfFfFfffFFFfffFfFffFfFFFf', 16)))))
 
     // good luck
-
-    await game.win();
-
+    await game.connect(signer[0]).win();
+    
     // leave this assertion as-is
     assert(await game.isWon(), 'You did not win the game');
   });
